@@ -20,12 +20,14 @@ touch /lib/systemd/system/x11vnc.service
 
 cat > /lib/systemd/system/x11vnc.service << EOL
 [Unit]
-Description=Start x11vnc at startup.
-After=multi-user.target
+Description=x11vnc service
+After=display-manager.service network.target syslog.target
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/x11vnc -auth guess -forever -noxdamage -repeat -rfbauth /etc/x11vnc/vncpwd -rfbport 5900 -shared
+ExecStart=/usr/bin/x11vnc -forever -display :0 -loop -noxdamage -repeat -allow -zeroconf -permitfiletransfer -ultrafilexfer -xkb -nocursor
+ExecStop=/usr/bin/killall x11vnc
+Restart=on-failure
 
 [Install]
 WantedBy=multi-user.target
